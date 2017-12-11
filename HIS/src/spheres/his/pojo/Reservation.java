@@ -16,6 +16,7 @@ public class Reservation {
 	String date_final_destination;
 	ArrayList<Traveler> travelers;
 	ArrayList<Flight> flights;
+	String tours;
 	
 	public ArrayList<Flight> getFlights() {
 		return flights;
@@ -114,13 +115,19 @@ public class Reservation {
 		this.itinerary = itinerary;
 	}
 	
+	public String getTours() {
+		return tours;
+	}
+	public void setTours(String tours) {
+		this.tours = tours;
+	}
 	@Override
 	public String toString() {
 		return "Reservation [confirmation=" + confirmation + ", pax=" + pax + ", branch=" + branch + ", agent=" + agent
 				+ ", NUC=" + NUC + ", request_code=" + request_code + ", japan_code=" + japan_code
 				+ ", final_destination=" + final_destination + ", date_final_destination=" + date_final_destination
-				+ ", travelers=" + travelers + ", flights=" + flights + ", itinerary=" + itinerary + ", parsed="
-				+ parsed + ", errors=" + errors + "]";
+				+ ", travelers=" + travelers + ", flights=" + flights + ", tours=" + tours + ", itinerary=" + itinerary
+				+ ", parsed=" + parsed + ", errors=" + errors + "]";
 	}
 	
 	

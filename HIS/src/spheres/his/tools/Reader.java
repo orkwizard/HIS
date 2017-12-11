@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
@@ -15,6 +16,8 @@ import org.apache.poi.hwpf.extractor.WordExtractor;
 import core.FSAirlines;
 import core.FSAirports;
 import core.FlightStats;
+import pojo.Airport;
+import pojo.arrays.Airports;
 import spheres.his.pojo.Itinerary;
 import spheres.his.pojo.Reservation;
 import spheres.his.pojo.Traveler;
@@ -25,22 +28,30 @@ public class Reader {
 	private String path;
 	private ArrayList<String> raw_records;
 	private ArrayList<Reservation> reservations;
-	private FSAirports airports;
 	private FSAirlines airlines;
+	private FSAirports airports;
+	
+	private HashMap<String,Airport> map;
 	
 	public Reader(String p) {
 		super();
 		path = p;
+		map = new HashMap<String,Airport>();
 		try {
 			FileInputStream input = new FileInputStream(path);
 			HWPFDocument doc = new HWPFDocument(input);
 			WordExtractor extract = new WordExtractor(doc);
 			raw_records = getRecords(extract.getText());
 			System.out.println("La cantidad de registros es -> " + raw_records.size());
-			airports = new FSAirports();
 			airlines = new FSAirlines();
-			//System.out.println("Aeropuertos :" + airports.size());
-			System.out.println("Aerolineas :" +  airlines.size());
+			airports = new FSAirports();		
+			Iterator<Airport> iterator = airports.getAllAirports().getAirports().iterator();
+			while(iterator.hasNext()) {
+				Airport a = iterator.next();
+				map.put(a.getIata(),a);
+			}			
+			//System.out.println("Aeropuertos :" + airports.getAirports().size());
+			//System.out.println("Aerolineas :" +  airlines.size());	
 			parse(raw_records);
 			
 		} catch (IOException e) {
@@ -90,18 +101,15 @@ public class Reader {
 						reservation.setDate_final_destination(atokens.nextToken());
 					}
 				}
-				reservation.setFlights(Itinerary.parseFlights(itinerary_record,airlines));
+				reservation.setFlights(Itinerary.parseFlights(itinerary_record,airlines,map));
 				
 			}
 				
-			
-			
+			reservation.setTours(tours);
+			reservation.setParsed(true);
 			//System.out.println(tours);
 			
-			
-			
-			
-			//System.out.println(reservation.toString());
+			System.out.println(reservation.toString());
 			
 		
 		}

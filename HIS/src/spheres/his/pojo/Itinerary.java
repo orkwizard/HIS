@@ -4,11 +4,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.StringTokenizer;
 
 import org.apache.commons.lang3.StringUtils;
 
 import core.FSAirlines;
+import core.FSAirports;
+import pojo.Airport;
 
 public class Itinerary {
 	ArrayList<Traveler> travelers;
@@ -53,32 +56,56 @@ public class Itinerary {
 	}
 	
 
-	public static ArrayList<Flight> parseFlights(BufferedReader itinerary_record, FSAirlines airlines) {
+	public static ArrayList<Flight> parseFlights(BufferedReader itinerary_record, FSAirlines airlines,HashMap<String,Airport> map) {
 		// TODO Auto-generated method stub
 		String line;
-		ArrayList<Flight> flights=null;
+		ArrayList<Flight> flights=new ArrayList<Flight>();
+		FSAirports air = new FSAirports();
 		try {
 			while((line=itinerary_record.readLine())!=null) {
-				System.out.println(line);
+				//System.out.println(line);
 				StringTokenizer tline = new StringTokenizer(line);
 				if(tline.countTokens()>0){
+					Flight f= new Flight();
 					//Get Airline
 					String flight= tline.nextToken();
 					String airlinecode = StringUtils.substring(flight, 0, 2) ;
 					String flightnumber = StringUtils.substring(flight, 2);
-					String rate = tline.nextToken();
+					String category = tline.nextToken();
 					String airports = tline.nextToken();
-					String originairport = airports.substring(0,2);
-					String departureairport = airports.substring(2);
+					String date = tline.nextToken();
 					
-					System.out.println(airlines.getAirlineByIata(airlinecode).getName() +  " - " + flightnumber + "Origin :" +originairport + " Departure " + departureairport);
+					f.setFlight_code(airlinecode);
+					f.setFlight_number(flightnumber);
+					f.setAirline(airlines.getAirlineByIata(airlinecode));
 					
+					//f.setDeparture_airport(air.getAirportByFS(airports.substring(0,3)));
+					//f.setArrival_airport(air.getAirportByFS(airports.substring(3)));
+					String dep_airport = airports.substring(0,3);
+					String arr_airport = airports.substring(3);
+					
+					Airport da = map.get(dep_airport);
+					Airport aa  =map.get(arr_airport);
+					if(da==null) {
+						da = new Airport();
+						da.setName("Invalid Airport");
+					}
+					if(aa==null) {
+						aa = new Airport();
+						aa.setName("Invalid Airport");
+					}
+					f.setDeparture_airport(da);
+					f.setArrival_airport(aa);
+					
+				
+					f.setCategory(category);
+					f.setDate(date);
+					
+					
+					flights.add(f);
+					//airlines.getAirlineByIata(airlinecode).getName() +  " - " + flightnumber + " Origin :" + origin.getName() + " Departure: " + departure.getName());
 				}
-				
 			}
-				
-			
-			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
