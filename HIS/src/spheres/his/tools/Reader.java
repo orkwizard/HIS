@@ -60,8 +60,10 @@ public class Reader {
 		}
 	}
 	
-	private void parse(ArrayList<String> raw_records) throws IOException {
+	public ArrayList<Reservation> parse(ArrayList<String> raw_records) throws IOException {
 		// TODO Auto-generated method stub
+		
+		ArrayList<Reservation> reservations = new ArrayList<Reservation>();
 		
 		Iterator<String> iterator = raw_records.iterator();
 		while(iterator.hasNext())
@@ -108,11 +110,12 @@ public class Reader {
 			reservation.setTours(tours);
 			reservation.setParsed(true);
 			//System.out.println(tours);
-			
+			reservations.add(reservation);
 			System.out.println(reservation.toString());
 			
 		
 		}
+		return reservations;
 	}
 
 	private String getTours(String record) {
